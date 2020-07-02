@@ -1,20 +1,15 @@
 import styled from 'styled-components';
 
-export const Navbar = styled.div`
-  display: flex;
-  justify-content: center;
-
-  background: #1b264f;
-  height: 75px;
-  width: 100%;
-`;
-
 export const NavbarText = styled.div`
   display: flex;
   align-items: center;
 
   font-size: 34px;
   color: white;
+`;
+
+export const NavbarLink = styled.a`
+  margin-left: auto;
 `;
 
 export const FilterContainer = styled.div`

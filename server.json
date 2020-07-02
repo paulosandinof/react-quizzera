@@ -1,7 +1,22 @@
 {
-  "users": {
-    "name": "Ronaldo",
-    "score": 0,
-    "time_to_finish": 3.881
-  }
+  "users": [
+    {
+      "name": "Sandino",
+      "score": 100,
+      "time_to_finish": 41.461,
+      "id": 1
+    },
+    {
+      "name": "Ronaldo",
+      "score": 50,
+      "time_to_finish": 14.933,
+      "id": 2
+    },
+    {
+      "name": "Rogerio",
+      "score": 10,
+      "time_to_finish": 19.502,
+      "id": 3
+    }
+  ]
 }

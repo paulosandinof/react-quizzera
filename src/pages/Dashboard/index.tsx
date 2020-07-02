@@ -5,9 +5,9 @@ import shuffle from '../../util/shuffle';
 
 import { quiz_api, users_api } from '../../services/api';
 
+import Navbar from '../../components/Navbar';
+
 import {
-  Navbar,
-  NavbarText,
   FilterContainer,
   CategorySelector,
   DifficultySelector,
@@ -135,9 +135,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <Navbar>
-        <NavbarText>Quizzera</NavbarText>
-      </Navbar>
+      <Navbar />
 
       <FilterContainer>
         <CategorySelector
