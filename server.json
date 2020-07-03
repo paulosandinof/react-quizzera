@@ -17,6 +17,30 @@
       "score": 10,
       "time_to_finish": 19.502,
       "id": 3
+    },
+    {
+      "name": "Flávio",
+      "score": 0,
+      "time_to_finish": 3.768,
+      "id": 4
+    },
+    {
+      "name": "Roberto",
+      "score": 30,
+      "time_to_finish": 56.712,
+      "id": 5
+    },
+    {
+      "name": "Marcio",
+      "score": 50,
+      "time_to_finish": 71.656,
+      "id": 6
+    },
+    {
+      "name": "Marcos",
+      "score": 20,
+      "time_to_finish": 32.729,
+      "id": 7
     }
   ]
 }

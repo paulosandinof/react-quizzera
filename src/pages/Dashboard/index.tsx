@@ -1,4 +1,5 @@
-import React, { useCallback, useState, FormEvent } from 'react';
+import React, { useCallback, useState, FormEvent, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AllHtmlEntities } from 'html-entities';
 
 import shuffle from '../../util/shuffle';
@@ -42,6 +43,8 @@ const Dashboard: React.FC = () => {
   );
   const [correctAnswers, setCorrectAnswers] = useState<string[]>([]);
   const [initialTime, setInitialTime] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { push } = useHistory();
 
   const handleChangeCategory = useCallback(event => {
     setSelectedCategory(event.target.value);
@@ -59,43 +62,50 @@ const Dashboard: React.FC = () => {
     setName(event.target.value);
   }, []);
 
-  const handleBeginQuiz = useCallback(() => {
-    quiz_api
-      .get('/', {
-        params: {
-          category: selectedCategory,
-          difficulty: selectedDifficulty,
-          amount: selectedQuantity,
-          type: 'multiple',
-        },
-      })
-      .then(response => {
-        const entities = new AllHtmlEntities();
+  const handleBeginQuiz = useCallback(
+    event => {
+      event.preventDefault();
 
-        const formattedQuestions = response.data.results.map(
-          (question: Response, index: number) => ({
-            number: index,
-            title: entities.decode(question.question),
-            shuffled_answers: shuffle([
+      if (inputRef.current?.checkValidity()) {
+        quiz_api
+          .get('/', {
+            params: {
+              category: selectedCategory,
+              difficulty: selectedDifficulty,
+              amount: selectedQuantity,
+              type: 'multiple',
+            },
+          })
+          .then(response => {
+            const entities = new AllHtmlEntities();
+
+            const formattedQuestions = response.data.results.map(
+              (question: Response, index: number) => ({
+                number: index,
+                title: entities.decode(question.question),
+                shuffled_answers: shuffle([
+                  entities.decode(question.correct_answer),
+                  ...question.incorrect_answers.map(incorrect_answer =>
+                    entities.decode(incorrect_answer),
+                  ),
+                ]),
+              }),
+            );
+
+            const answers = response.data.results.map((question: Response) =>
               entities.decode(question.correct_answer),
-              ...question.incorrect_answers.map(incorrect_answer =>
-                entities.decode(incorrect_answer),
-              ),
-            ]),
-          }),
-        );
+            );
 
-        const answers = response.data.results.map((question: Response) =>
-          entities.decode(question.correct_answer),
-        );
-
-        console.log(answers);
-
-        setInitialTime(new Date().getTime());
-        setQuestions(formattedQuestions);
-        setCorrectAnswers(answers);
-      });
-  }, [selectedCategory, selectedDifficulty, selectedQuantity]);
+            setInitialTime(new Date().getTime());
+            setQuestions(formattedQuestions);
+            setCorrectAnswers(answers);
+          });
+      } else {
+        alert(`Please type your name`); // eslint-disable-line
+      }
+    },
+    [selectedCategory, selectedDifficulty, selectedQuantity],
+  );
 
   const handleSelectAnwser = useCallback(
     (id: number, anwser: string) => {
@@ -128,9 +138,18 @@ const Dashboard: React.FC = () => {
         time_to_finish: (finalTime - initialTime) / 1000,
       });
 
-      alert(`You scored ${userScore} of ${selectedQuantity}`);
+      alert(`You scored ${userScore} of ${selectedQuantity}`); // eslint-disable-line
+
+      push('/leaderboard');
     },
-    [selectedAnswers, correctAnswers, selectedQuantity, initialTime, name],
+    [
+      selectedAnswers,
+      correctAnswers,
+      selectedQuantity,
+      initialTime,
+      name,
+      push,
+    ],
   );
 
   return (
@@ -167,12 +186,15 @@ const Dashboard: React.FC = () => {
 
       <NameContainer>
         <input
+          ref={inputRef}
           type="text"
           onChange={handleNameChange}
           value={name}
           placeholder="Type your name"
+          required
+          pattern="[a-zA-Z\u00C0-\u024F0-9]+"
         />
-        <button type="button" onClick={handleBeginQuiz}>
+        <button type="submit" onClick={handleBeginQuiz}>
           Begin Quiz
         </button>
       </NameContainer>

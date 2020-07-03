@@ -37,7 +37,7 @@ export const QuantitySelector = styled.select`
   margin-left: 10px;
 `;
 
-export const NameContainer = styled.div`
+export const NameContainer = styled.form`
   display: flex;
   justify-content: center;
 

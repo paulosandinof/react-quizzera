@@ -4,11 +4,33 @@ import { users_api } from '../../services/api';
 
 import Navbar from '../../components/Navbar';
 
-import { FilterContainer, Filter, Order } from './styles';
+import {
+  FilterContainer,
+  Filter,
+  Order,
+  Content,
+  LeaderboardContainer,
+  LeaderboardHeader,
+  LeaderboardItem,
+} from './styles';
+
+interface LeaderboardState {
+  rank: number;
+  name: string;
+  score: number;
+  time_to_finish: number;
+}
+
+interface Response {
+  name: string;
+  score: number;
+  time_to_finish: number;
+}
 
 const Leaderboard: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('score');
-  const [filterOrder, setFilterOrder] = useState('asc');
+  const [filterOrder, setFilterOrder] = useState('desc');
+  const [leaderboard, setLeaderboard] = useState<LeaderboardState[]>([]);
 
   const handleChangeSelectedFilter = useCallback(event => {
     setSelectedFilter(event.target.value);
@@ -27,7 +49,18 @@ const Leaderboard: React.FC = () => {
         },
       })
       .then(response => {
-        console.log(response.data);
+        const formattedRank = response.data.map(
+          (item: Response, index: number) => {
+            return {
+              rank: index + 1,
+              name: item.name,
+              score: item.score,
+              time_to_finish: item.time_to_finish,
+            };
+          },
+        );
+
+        setLeaderboard(formattedRank);
       });
   }, [selectedFilter, filterOrder]);
 
@@ -45,6 +78,25 @@ const Leaderboard: React.FC = () => {
           <option value="desc">Descendant</option>
         </Order>
       </FilterContainer>
+
+      <Content>
+        <LeaderboardContainer>
+          <LeaderboardHeader>
+            <span>Rank</span>
+            <span>Name</span>
+            <span>Score</span>
+            <span>Finish Time</span>
+          </LeaderboardHeader>
+          {leaderboard.map(item => (
+            <LeaderboardItem key={item.rank}>
+              <strong>{item.rank}</strong>
+              <span>{item.name}</span>
+              <span>{item.score}</span>
+              <span>{`${item.time_to_finish}s`}</span>
+            </LeaderboardItem>
+          ))}
+        </LeaderboardContainer>
+      </Content>
     </>
   );
 };
